@@ -1,24 +1,42 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import CharacterList from './Components/CharacterList';
 
-function App() {
+
+const App = () => {
+  const [characters, setCharacters] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+
+  const getCharacters = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('https://www.breakingbadapi.com/api/characters');
+      const finalResult = await res.json();
+      setCharacters(finalResult);
+      setLoading(false)
+      setError('')
+    } catch (err) {
+      console.log(err)
+    }
+
+  }
+
+  useEffect(() => {
+    getCharacters();
+  }, []);
+
+  if (loading) return <p>loading</p>
+  if(error) return <p>Error</p>
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <CharacterList characters={characters} />
+
     </div>
+
   );
 }
 
